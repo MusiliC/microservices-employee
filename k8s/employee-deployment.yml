@@ -55,6 +55,26 @@ spec:
         env:
         - name: MYSQL_HOST
           value: mysql-0.mysql
+        - name: EMPLOYEE_DB_NAME
+          valueFrom: 
+            configMapKeyRef: 
+              name: cluster-config-map
+              key: employee-database-name   
+        - name: MYSQL_PORT
+          valueFrom: 
+            configMapKeyRef: 
+              name: cluster-config-map
+              key:  mysql-database-port      
+        - name: MYSQL_DB_USERNAME
+          valueFrom: 
+            secretKeyRef: 
+              name: cluster-secret
+              key:  mysql-root-username    
+        - name:   MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cluster-secret
+              key: mysql-root-password           
         ports:
         - containerPort:  8080
           name:  employee
