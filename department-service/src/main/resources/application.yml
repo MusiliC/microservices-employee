@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: department-service
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DEPARTMENT_DB_NAME:departmentdb}
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:Mysql@254}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+
+
