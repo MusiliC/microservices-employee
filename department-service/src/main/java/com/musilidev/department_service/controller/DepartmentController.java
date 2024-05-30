@@ -1,5 +1,6 @@
 package com.musilidev.department_service.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -48,7 +49,7 @@ public class DepartmentController {
         return  departmentService.updateDepartment(departmentNo, departmentRequestDto);
     }
 
-    @PutMapping("{departmentNo}")
+    @DeleteMapping("{departmentNo}")
     public Map<String, Object> deleteDepartment(@PathVariable Integer departmentNo) {
         return  departmentService.deleteDepartment(departmentNo);
     }

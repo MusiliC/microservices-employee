@@ -55,7 +55,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         Department department = departmentRepository
                 .findById(departmentNo).orElseThrow(() -> new RuntimeException("Department not found"));
 
-        boolean deptNameExist = departmentRepository.findByDepartmentName(departmentRequestDto.getDepartmentName());
+        boolean deptNameExist = departmentRepository.findByDepartmentName(departmentRequestDto.getDepartmentName()).isPresent();
 
         if (deptNameExist) {
             throw new RuntimeException("Department name " + departmentRequestDto.getDepartmentName() + " already exist");
@@ -68,6 +68,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Map<String, Object> deleteDepartment(Integer departmentNo) {
+
         departmentRepository.deleteById(departmentNo);
         Map<String, Object> response = new HashMap<>();
         response.put("Success", true);
