@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -24,159 +23,179 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
 class DepartmentServiceImplTest {
 
-    @Mock
-    public DepartmentRepository departmentRepository;
+        @Mock
+        public DepartmentRepository departmentRepository;
 
-    public ModelMapper modelMapper = new ModelMapper();
+        public ModelMapper modelMapper = new ModelMapper();
 
-    private DepartmentServiceImpl departmentServiceImpl;
+        private DepartmentServiceImpl departmentServiceImpl;
 
-    @BeforeEach
-    void setUp() {
-        departmentServiceImpl = new DepartmentServiceImpl(departmentRepository, modelMapper);
-    }
+        @BeforeEach
+        void setUp() {
+                departmentServiceImpl = new DepartmentServiceImpl(departmentRepository, modelMapper);
+        }
 
-    @AfterEach
-    void tearDown() {
-    }
+        @AfterEach
+        void tearDown() {
+        }
 
-    @Test
-    void testThatCreateDepartment() {
+        @Test
+        void testThatCreateDepartment() {
 
-        //given
-        DepartmentRequestDto computerScience = DepartmentRequestDto.builder().departmentName("Computer science").build();
-        //when
-        when(departmentRepository.save(any(Department.class))).thenReturn(Department
-                .builder()
-                .departmentName("Computer science")
-                .departmentNumber(1)
-                .build());
-        DepartmentCreateResponse actualDepartmentResponse = departmentServiceImpl.createDepartment(computerScience);
-        //then
-        DepartmentCreateResponse expectedResponse = DepartmentCreateResponse
-                .builder()
-                .departmentName("Computer science")
-                .departmentNumber(1)
-                .build();
-        assertThat(actualDepartmentResponse.getDepartmentName()).isNotNull();
-        assertThat(actualDepartmentResponse.getDepartmentName()).isEqualTo(expectedResponse.getDepartmentName());
-        assertThat(actualDepartmentResponse.getDepartmentNumber()).isEqualTo(1);
-    }
+                // given
+                DepartmentRequestDto computerScience = DepartmentRequestDto.builder().departmentName("Computer science")
+                                .build();
+                // when
+                when(departmentRepository.save(any(Department.class))).thenReturn(Department
+                                .builder()
+                                .departmentName("Computer science")
+                                .departmentNumber(1)
+                                .build());
+                DepartmentCreateResponse actualDepartmentResponse = departmentServiceImpl
+                                .createDepartment(computerScience);
+                // then
+                DepartmentCreateResponse expectedResponse = DepartmentCreateResponse
+                                .builder()
+                                .departmentName("Computer science")
+                                .departmentNumber(1)
+                                .build();
+                assertThat(actualDepartmentResponse.getDepartmentName()).isNotNull();
+                assertThat(actualDepartmentResponse.getDepartmentName())
+                                .isEqualTo(expectedResponse.getDepartmentName());
+                assertThat(actualDepartmentResponse.getDepartmentNumber()).isEqualTo(1);
+        }
 
+        @Test
+        void testThatGetAllDepartments() {
+                // given
+                departmentServiceImpl.getAllDepartments();
+                // when
+                // then
+                verify(departmentRepository).findAll();
+        }
 
-    @Test
-    void testThatGetAllDepartments() {
-        //given
-        departmentServiceImpl.getAllDepartments();
-        //when
-        //then
-        verify(departmentRepository).findAll();
-    }
+        @Test
+        void testThatGetByDeptNoShouldHaveValueWhenFound() {
+                // given
+                Integer deptNo = 1;
+                Department computerScience = Department
+                                .builder()
+                                .departmentName("Computer science")
+                                .departmentNumber(1)
+                                .build();
+                when(departmentRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(computerScience));
+                // when
+                DepartmentCreateResponse departmentCreateResponse = departmentServiceImpl.singleDepartment(deptNo);
+                // then
+                assertThat(departmentCreateResponse.getDepartmentNumber()).isEqualTo(deptNo);
+                assertThat(departmentCreateResponse.getDepartmentName()).isEqualTo(computerScience.getDepartmentName());
+        }
 
-    @Test
-    void testThatGetByDeptNoShouldHaveValueWhenFound() {
-        //given
-        Integer deptNo = 1;
-        Department computerScience = Department
-                .builder()
-                .departmentName("Computer science")
-                .departmentNumber(1)
-                .build();
-        when(departmentRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(computerScience));
-        //when
-        DepartmentCreateResponse departmentCreateResponse = departmentServiceImpl.singleDepartment(deptNo);
-        //then
-        assertThat(departmentCreateResponse.getDepartmentNumber()).isEqualTo(deptNo);
-        assertThat(departmentCreateResponse.getDepartmentName()).isEqualTo(computerScience.getDepartmentName());
-    }
+        @Test
+        void testThatGetByDeptNoShouldThrowRunTimeExceptionWhenNotFound() {
+                // given
+                Integer deptNo = 1;
+                Department computerScience = Department
+                                .builder()
+                                .departmentName("Computer science")
+                                .departmentNumber(1)
+                                .build();
+                when(departmentRepository.findById(Mockito.anyInt())).thenReturn(Optional.empty());
+                // when
 
-    @Test
-    void testThatGetByDeptNoShouldThrowRunTimeExceptionWhenNotFound() {
-        //given
-        Integer deptNo = 1;
-        Department computerScience = Department
-                .builder()
-                .departmentName("Computer science")
-                .departmentNumber(1)
-                .build();
-        when(departmentRepository.findById(Mockito.anyInt())).thenReturn(Optional.empty());
-        //when
+                assertThatThrownBy(() -> departmentServiceImpl.singleDepartment(deptNo))
+                                .isInstanceOf(RuntimeException.class)
+                                .hasMessage("Department not found");
 
-        assertThatThrownBy(() -> departmentServiceImpl.singleDepartment(deptNo))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Department not found");
+        }
 
-    }
+        @Test
+        void testThatUpdateDepartment() {
+                // given
+                Integer deptNo = 1;
 
-    @Test
-    void testThatUpdateDepartment() {
-        //given
-        Integer deptNo = 1;
+                DepartmentRequestDto deptRequest = DepartmentRequestDto.builder().departmentName("IT").build();
 
-        DepartmentRequestDto deptRequest = DepartmentRequestDto.builder().departmentName("IT").build();
+                Department dept = Department
+                                .builder()
+                                .departmentName("Computer science")
+                                .departmentNumber(1)
+                                .build();
+                when(departmentRepository.findById(eq(deptNo))).thenReturn(Optional.of(dept));
+                when(departmentRepository.findByDepartmentName(eq(deptRequest.getDepartmentName())))
+                                .thenReturn(Optional.empty()); // simulates new name is not taken
 
+                when(departmentRepository.save(any(Department.class))).thenReturn(Department
+                                .builder()
+                                .departmentName("IT")
+                                .departmentNumber(1)
+                                .build());
 
-        Department dept = Department
-                .builder()
-                .departmentName("Computer science")
-                .departmentNumber(1)
-                .build();
-        when(departmentRepository.findById(eq(deptNo))).thenReturn(Optional.of(dept));
-        when(departmentRepository.findByDepartmentName(eq(deptRequest.getDepartmentName())))
-                .thenReturn(Optional.empty()); //simulates new name is not taken
+                // when
+                DepartmentCreateResponse updateDepartment = departmentServiceImpl.updateDepartment(deptNo, deptRequest);
 
-        when(departmentRepository.save(any(Department.class))).thenReturn(Department
-                .builder()
-                .departmentName("IT")
-                .departmentNumber(1)
-                .build());
+                assertThat(updateDepartment.getDepartmentName()).isEqualTo(deptRequest.getDepartmentName());
+        }
 
-        //when
-        DepartmentCreateResponse updateDepartment = departmentServiceImpl.updateDepartment(deptNo, deptRequest);
+        @Test
+        void testThatUpdateDepartmentWhenNameExists() {
+                // given
+                Integer deptNo = 1;
 
-        assertThat(updateDepartment.getDepartmentName()).isEqualTo(deptRequest.getDepartmentName());
-    }
+                DepartmentRequestDto deptRequest = DepartmentRequestDto.builder().departmentName("IT").build();
 
+                Department dept = Department
+                                .builder()
+                                .departmentName("IT")
+                                .departmentNumber(1)
+                                .build();
 
-    @Test
-    void testThatUpdateDepartmentWhenNameExists() {
-        //given
-        Integer deptNo = 1;
+                when(departmentRepository.findById(eq(deptNo))).thenReturn(Optional.of(dept));
+                when(departmentRepository.findByDepartmentName(eq(deptRequest.getDepartmentName())))
+                                .thenReturn(Optional.of(dept)); // simulates new name is not taken
 
-        DepartmentRequestDto deptRequest = DepartmentRequestDto.builder().departmentName("IT").build();
+                // when
+                assertThatThrownBy(() -> departmentServiceImpl.updateDepartment(deptNo, deptRequest))
+                                .isInstanceOf(RuntimeException.class)
+                                .hasMessage("Department name " + deptRequest.getDepartmentName() + " already exist");
+                verify(departmentRepository, never()).save(any());
+        }
 
-        Department dept = Department
-                .builder()
-                .departmentName("IT")
-                .departmentNumber(1)
-                .build();
+        @Test
+        void testThatUpdateDepartmentWhenDeptNotExist() {
+                // given
+                Integer deptNo = 1;
 
-        when(departmentRepository.findById(eq(deptNo))).thenReturn(Optional.of(dept));
-        when(departmentRepository.findByDepartmentName(eq(deptRequest.getDepartmentName())))
-                .thenReturn(Optional.of(dept)); //simulates new name is not taken
+                DepartmentRequestDto deptRequest = DepartmentRequestDto.builder().departmentName("IT").build();
 
+                Department dept = Department
+                                .builder()
+                                .departmentName("IT")
+                                .departmentNumber(1)
+                                .build();
 
-        //when
-        assertThatThrownBy(() -> departmentServiceImpl.updateDepartment(deptNo, deptRequest))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Department name " + deptRequest.getDepartmentName() + " already exist");
-        verify(departmentRepository,never()).save(any());
-    }
+                when(departmentRepository.findById(eq(deptNo))).thenReturn(Optional.empty());              
 
-    @Test
-    void testThatDeleteDepartment() {
-        //given
-        Integer deptNo = 1;
+                // when
+                assertThatThrownBy(() -> departmentServiceImpl.updateDepartment(deptNo, deptRequest))
+                                .isInstanceOf(RuntimeException.class)
+                                .hasMessage("Department not found");
+                verify(departmentRepository, never()).save(any());
+        }
 
-        Map<String, Object> deleteDepartment = departmentServiceImpl.deleteDepartment(deptNo);
+        @Test
+        void testThatDeleteDepartment() {
+                // given
+                Integer deptNo = 1;
 
-        verify(departmentRepository).deleteById(deptNo);
-        assertThat(deleteDepartment.containsKey("success"));
-        assertThat(deleteDepartment.containsValue(true));
+                Map<String, Object> deleteDepartment = departmentServiceImpl.deleteDepartment(deptNo);
 
-    }
+                verify(departmentRepository).deleteById(deptNo);
+                assertThat(deleteDepartment.containsKey("success"));
+                assertThat(deleteDepartment.containsValue(true));
+
+        }
 }
