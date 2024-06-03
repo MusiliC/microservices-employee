@@ -1,6 +1,7 @@
 package com.musilidev.department_service.repository;
 
 
+import com.musilidev.department_service.AbstractTestContainersTest;
 import com.musilidev.department_service.entity.Department;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
@@ -20,20 +21,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DataJpaTest
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class DepartmentRepositoryTest {
+public class DepartmentRepositoryTest extends AbstractTestContainersTest {
 
-    @Container
-    @ServiceConnection
-    static MySQLContainer<?> mysqlContainer = new MySQLContainer<>(DockerImageName.parse("mysql:latest"));
 
     @Autowired
     private DepartmentRepository departmentRepository;
-
-    @Test
-    public void canEstablishConnection() {
-        assertThat(mysqlContainer.isCreated()).isTrue();
-        assertThat(mysqlContainer.isRunning()).isTrue();
-    }
 
     @BeforeEach
     void setUp() {
