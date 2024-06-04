@@ -6,6 +6,7 @@ import cee.dev.employeeservice.entity.Gender;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class EmployeeRequestDto {
+public class EmployeeCreateRequestDto {
 
     @Past(message = "birth_date need to be past")
 
@@ -38,6 +39,8 @@ public class EmployeeRequestDto {
     private String lastName;
 
     @Enumerated(EnumType.STRING)
-
     private Gender gender;
+
+    @NotNull
+    private Integer departmentId;
 }

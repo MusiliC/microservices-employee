@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DepartmentCreateResponse {
+public class DepartmentResponseDto {
 
     private Integer departmentNumber;
 

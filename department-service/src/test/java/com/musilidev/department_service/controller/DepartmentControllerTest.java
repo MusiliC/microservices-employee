@@ -1,7 +1,7 @@
 package com.musilidev.department_service.controller;
 
 import com.musilidev.department_service.AbstractTestContainersTest;
-import com.musilidev.department_service.model.DepartmentCreateResponse;
+import com.musilidev.department_service.model.DepartmentResponseDto;
 import com.musilidev.department_service.model.DepartmentRequestDto;
 import java.util.List;
 import java.util.Map;
@@ -12,19 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -55,35 +50,35 @@ class DepartmentControllerTest extends AbstractTestContainersTest {
                 .build();
 
         //when
-        ResponseEntity<DepartmentCreateResponse> response = testRestTemplate.exchange(
+        ResponseEntity<DepartmentResponseDto> response = testRestTemplate.exchange(
                 API_BASE_URL,
                 HttpMethod.POST,
                 new HttpEntity<>(deptRequest),
-                new ParameterizedTypeReference<DepartmentCreateResponse>() {
+                new ParameterizedTypeReference<DepartmentResponseDto>() {
                 });
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         //make a call to list the data
-        ResponseEntity<List<DepartmentCreateResponse>> listResponse = testRestTemplate.exchange(
+        ResponseEntity<List<DepartmentResponseDto>> listResponse = testRestTemplate.exchange(
                 API_BASE_URL,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<DepartmentCreateResponse>>() {
+                new ParameterizedTypeReference<List<DepartmentResponseDto>>() {
                 }
         );
 
         assertThat(listResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         Objects.requireNonNull(listResponse.getBody());
-        DepartmentCreateResponse departmentCreateResponse = listResponse
+        DepartmentResponseDto departmentResponseDto = listResponse
                 .getBody()
                 .stream()
                 .filter(deptResponse -> deptResponse.getDepartmentName().equals(deptRequest.getDepartmentName()))
                 .findFirst()
                 .orElseThrow();
 
-        assertThat(departmentCreateResponse.getDepartmentNumber()).isNotNull();
-        assertThat(departmentCreateResponse.getDepartmentName()).isEqualTo(deptRequest.getDepartmentName());
+        assertThat(departmentResponseDto.getDepartmentNumber()).isNotNull();
+        assertThat(departmentResponseDto.getDepartmentName()).isEqualTo(deptRequest.getDepartmentName());
 
     }
 
@@ -97,26 +92,26 @@ class DepartmentControllerTest extends AbstractTestContainersTest {
                 .build();
 
         //when
-        ResponseEntity<DepartmentCreateResponse> response = testRestTemplate.exchange(
+        ResponseEntity<DepartmentResponseDto> response = testRestTemplate.exchange(
                 API_BASE_URL,
                 HttpMethod.POST,
                 new HttpEntity<>(deptRequest),
-                new ParameterizedTypeReference<DepartmentCreateResponse>() {
+                new ParameterizedTypeReference<DepartmentResponseDto>() {
                 });
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        DepartmentCreateResponse deptRes = Objects.requireNonNull(response.getBody());
+        DepartmentResponseDto deptRes = Objects.requireNonNull(response.getBody());
 
         //call to update end point
-        ResponseEntity<DepartmentCreateResponse> updateRes = testRestTemplate.exchange(
+        ResponseEntity<DepartmentResponseDto> updateRes = testRestTemplate.exchange(
                 API_BASE_URL + "/" + deptRes.getDepartmentNumber(),
                 HttpMethod.PUT,
                 new HttpEntity<>(DepartmentRequestDto.builder().departmentName("Social").build()),
-                new ParameterizedTypeReference<DepartmentCreateResponse>() {
+                new ParameterizedTypeReference<DepartmentResponseDto>() {
                 });
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        DepartmentCreateResponse updatedDeptRes = Objects.requireNonNull(updateRes.getBody());
+        DepartmentResponseDto updatedDeptRes = Objects.requireNonNull(updateRes.getBody());
         assertThat(updatedDeptRes.getDepartmentName()).isEqualTo("Social");
         assertThat(updatedDeptRes.getDepartmentNumber()).isEqualTo(deptRes.getDepartmentNumber());
     }
@@ -131,27 +126,27 @@ class DepartmentControllerTest extends AbstractTestContainersTest {
                 .build();
 
         //when
-        ResponseEntity<DepartmentCreateResponse> response = testRestTemplate.exchange(
+        ResponseEntity<DepartmentResponseDto> response = testRestTemplate.exchange(
                 API_BASE_URL,
                 HttpMethod.POST,
                 new HttpEntity<>(deptRequest),
-                new ParameterizedTypeReference<DepartmentCreateResponse>() {
+                new ParameterizedTypeReference<DepartmentResponseDto>() {
                 });
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        DepartmentCreateResponse deptRes = Objects.requireNonNull(response.getBody());
+        DepartmentResponseDto deptRes = Objects.requireNonNull(response.getBody());
 
         //call to get end point
-        ResponseEntity<DepartmentCreateResponse> getByDeptId = testRestTemplate.exchange(
+        ResponseEntity<DepartmentResponseDto> getByDeptId = testRestTemplate.exchange(
                 API_BASE_URL + "/" + deptRes.getDepartmentNumber(),
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<DepartmentCreateResponse>() {
+                new ParameterizedTypeReference<DepartmentResponseDto>() {
                 });
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        DepartmentCreateResponse deptResBodyByNo = Objects.requireNonNull(getByDeptId.getBody());
+        DepartmentResponseDto deptResBodyByNo = Objects.requireNonNull(getByDeptId.getBody());
         assertThat(deptResBodyByNo.getDepartmentName()).isEqualTo(deptRequest.getDepartmentName());
 
     }
@@ -167,16 +162,16 @@ class DepartmentControllerTest extends AbstractTestContainersTest {
                 .build();
 
         //when
-        ResponseEntity<DepartmentCreateResponse> response = testRestTemplate.exchange(
+        ResponseEntity<DepartmentResponseDto> response = testRestTemplate.exchange(
                 API_BASE_URL,
                 HttpMethod.POST,
                 new HttpEntity<>(deptRequest),
-                new ParameterizedTypeReference<DepartmentCreateResponse>() {
+                new ParameterizedTypeReference<DepartmentResponseDto>() {
                 });
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        DepartmentCreateResponse deptRes = response.getBody();
+        DepartmentResponseDto deptRes = response.getBody();
         Objects.requireNonNull(deptRes);
 
         //call to delete end point

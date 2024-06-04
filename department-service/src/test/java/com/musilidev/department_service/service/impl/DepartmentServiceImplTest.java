@@ -1,7 +1,7 @@
 package com.musilidev.department_service.service.impl;
 
 import com.musilidev.department_service.entity.Department;
-import com.musilidev.department_service.model.DepartmentCreateResponse;
+import com.musilidev.department_service.model.DepartmentResponseDto;
 import com.musilidev.department_service.model.DepartmentRequestDto;
 import com.musilidev.department_service.repository.DepartmentRepository;
 import java.util.Map;
@@ -54,10 +54,10 @@ class DepartmentServiceImplTest {
                                 .departmentName("Computer science")
                                 .departmentNumber(1)
                                 .build());
-                DepartmentCreateResponse actualDepartmentResponse = departmentServiceImpl
+                DepartmentResponseDto actualDepartmentResponse = departmentServiceImpl
                                 .createDepartment(computerScience);
                 // then
-                DepartmentCreateResponse expectedResponse = DepartmentCreateResponse
+                DepartmentResponseDto expectedResponse = DepartmentResponseDto
                                 .builder()
                                 .departmentName("Computer science")
                                 .departmentNumber(1)
@@ -88,10 +88,10 @@ class DepartmentServiceImplTest {
                                 .build();
                 when(departmentRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(computerScience));
                 // when
-                DepartmentCreateResponse departmentCreateResponse = departmentServiceImpl.singleDepartment(deptNo);
+                DepartmentResponseDto departmentResponseDto = departmentServiceImpl.getDepartmentByDepartmentNumber(deptNo);
                 // then
-                assertThat(departmentCreateResponse.getDepartmentNumber()).isEqualTo(deptNo);
-                assertThat(departmentCreateResponse.getDepartmentName()).isEqualTo(computerScience.getDepartmentName());
+                assertThat(departmentResponseDto.getDepartmentNumber()).isEqualTo(deptNo);
+                assertThat(departmentResponseDto.getDepartmentName()).isEqualTo(computerScience.getDepartmentName());
         }
 
         @Test
@@ -106,7 +106,7 @@ class DepartmentServiceImplTest {
                 when(departmentRepository.findById(Mockito.anyInt())).thenReturn(Optional.empty());
                 // when
 
-                assertThatThrownBy(() -> departmentServiceImpl.singleDepartment(deptNo))
+                assertThatThrownBy(() -> departmentServiceImpl.getDepartmentByDepartmentNumber(deptNo))
                                 .isInstanceOf(RuntimeException.class)
                                 .hasMessage("Department not found");
 
@@ -135,7 +135,7 @@ class DepartmentServiceImplTest {
                                 .build());
 
                 // when
-                DepartmentCreateResponse updateDepartment = departmentServiceImpl.updateDepartment(deptNo, deptRequest);
+                DepartmentResponseDto updateDepartment = departmentServiceImpl.updateDepartment(deptNo, deptRequest);
 
                 assertThat(updateDepartment.getDepartmentName()).isEqualTo(deptRequest.getDepartmentName());
         }

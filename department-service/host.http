@@ -5,13 +5,13 @@ POST {{host}}/api/departments
 Content-Type: application/json
 
 {
-  "departmentName": "Food"
+  "departmentName": "Information Technology"
 }
 
 ### Get departments
 GET {{host}}/api/departments
 
-### Get departments
+### Get single department
 GET {{host}}/api/departments/2
 
 ### Update departments
