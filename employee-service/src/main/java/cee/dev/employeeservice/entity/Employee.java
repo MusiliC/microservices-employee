@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
@@ -51,8 +52,11 @@ public class Employee {
     private String lastName;
 
     @Enumerated(EnumType.STRING)
-
     private Gender gender;
+
+    @Column(name = "dept_id")
+    @NotNull
+    private Integer departmentId;
 
 
 }

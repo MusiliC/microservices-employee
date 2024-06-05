@@ -4,15 +4,16 @@ package cee.dev.employeeservice.controller;
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cee.dev.employeeservice.model.EmployeeRequestDto;
+import cee.dev.employeeservice.model.EmployeeCreateRequestDto;
+
 import cee.dev.employeeservice.model.EmployeeResponseDto;
+import cee.dev.employeeservice.model.EmployeeWithDepartment;
 import cee.dev.employeeservice.service.EmployeeService;
 import jakarta.validation.Valid;
 
@@ -27,13 +28,18 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public EmployeeResponseDto create(@RequestBody @Valid EmployeeRequestDto employeeRequestDto){
+    public EmployeeResponseDto create(@RequestBody @Valid EmployeeCreateRequestDto employeeRequestDto){
         return employeeService.createEmployee(employeeRequestDto);
     }
 
     @GetMapping
     public List<EmployeeResponseDto>  getEmployees(){
         return employeeService.listAllEmployees();
+    }
+
+    @GetMapping("with-department")
+    public List<EmployeeWithDepartment>  getEmployeesWithDepartment(){
+        return employeeService.getEmployeesWithDepartment();
     }
 
     @GetMapping("{empNo}")

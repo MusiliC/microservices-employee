@@ -4,7 +4,7 @@ services:
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: Mysql@254
-      MYSQL_DATABASE: employee
+      MYSQL_DATABASE: employeedb
       MYSQL_USER: root
       MYSQL_PASSWORD: Mysql@254
     restart: always

@@ -2,7 +2,7 @@ spring:
   application:
     name: employee-service
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${EMPLOYEE_DB_NAME:employee}
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${EMPLOYEE_DB_NAME:employeedb}
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:Mysql@254}
   jpa:

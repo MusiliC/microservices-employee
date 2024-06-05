@@ -5,17 +5,21 @@ POST {{host}}/api/employees
 Content-Type: application/json
 
 {
-  "birthDate": "2000-12-14",
-  "firstName": "Brian",
-  "lastName": "Kasee",
+  "birthDate": "2006-02-06",
+  "firstName": "Ian",
+  "lastName": "Mayani",
   "hireDate": "2024-04-01",
-  "gender": "MALE"
+  "gender": "MALE",
+  "departmentId": 2
 }
 
 ### Get Employees
 GET {{host}}/api/employees
 
-### Get Employees
+### Get Employees With department info
+GET {{host}}/api/employees/with-department
+
+### Get single Employee
 GET {{host}}/api/employees/100
 
 ### Delete Employees
