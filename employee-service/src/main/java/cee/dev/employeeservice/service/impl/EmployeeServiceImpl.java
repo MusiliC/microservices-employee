@@ -68,22 +68,33 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<EmployeeWithDepartment> getEmployeesWithDepartment() {
-        // fetch list of employees
-        // department information for employee
-        // set department information
+
 
         List<EmployeeWithDepartment> employeesList = employeeRepository.findAll()
                 .stream()
                 .map(e -> modelMapper.map(e, EmployeeWithDepartment.class))
                 .toList();
 
+//        log.info("Solution 1");
+//        setDepartmentInformationByIndividualCalls(employeesList);
+
+        log.info("Solution 2");
+        List<Integer> departmentIds = employeesList.stream().map(emp -> emp.getDepartmentId()).toList();
+       // List<Integer> departmentIds = employeesList.stream().map(EmployeeWithDepartment::getDepartmentId).toList();
+
+        //http://localhost:8081/api/departments/batch
+        //[ids]
+
+
+        return employeesList;
+    }
+
+    private void setDepartmentInformationByIndividualCalls(List<EmployeeWithDepartment> employeesList) {
         employeesList.stream().forEach(emp -> {
             //DepartmentResponseDto dpt = getDepartmentUsingWebClient(emp);
             DepartmentResponseDto dpt = getDepartmentUsingRestClient(emp);
             emp.setDepartmentResponseDto(dpt);
         });
-
-        return employeesList;
     }
 
     private DepartmentResponseDto getDepartmentUsingWebClient(EmployeeWithDepartment emp) {

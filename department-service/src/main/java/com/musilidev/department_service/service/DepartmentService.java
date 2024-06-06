@@ -16,4 +16,6 @@ public interface DepartmentService {
     DepartmentResponseDto updateDepartment(Integer departmentNo, DepartmentRequestDto departmentRequestDto);
 
     Map<String, Object> deleteDepartment(Integer departmentNo);
+
+    List<DepartmentResponseDto> getDepartmentsByIds(List<Integer> ids);
 }

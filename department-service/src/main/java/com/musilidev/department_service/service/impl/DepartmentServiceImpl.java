@@ -74,4 +74,9 @@ public class DepartmentServiceImpl implements DepartmentService {
         response.put("Success", true);
         return response;
     }
+
+    @Override
+    public List<DepartmentResponseDto> getDepartmentsByIds(List<Integer> ids) {
+        throw new UnsupportedOperationException("getDepartmentsByIds of DepartmentServiceImpl class is not implemented");
+    }
 }

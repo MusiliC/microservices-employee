@@ -31,6 +31,11 @@ public class DepartmentController {
        return departmentService.createDepartment(departmentRequestDto);
     }
 
+    @PostMapping("batch")
+    public List<DepartmentResponseDto> getDepartmentsByIds(@RequestBody List<Integer> ids) {
+        return departmentService.getDepartmentsByIds(ids);
+    }
+
     @GetMapping
     List<DepartmentResponseDto> getAllDepartments() {
         return  departmentService.getAllDepartments();
