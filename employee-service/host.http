@@ -5,12 +5,12 @@ POST {{host}}/api/employees
 Content-Type: application/json
 
 {
-  "birthDate": "2006-02-06",
-  "firstName": "Ian",
-  "lastName": "Mayani",
-  "hireDate": "2024-04-01",
+  "birthDate": "2000-12-14",
+  "firstName": "Master",
+  "lastName": "Kasee",
+  "hireDate": "2024-04-02",
   "gender": "MALE",
-  "departmentId": 2
+  "departmentId": 3
 }
 
 ### Get Employees

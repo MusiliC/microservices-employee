@@ -77,6 +77,9 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public List<DepartmentResponseDto> getDepartmentsByIds(List<Integer> ids) {
-        throw new UnsupportedOperationException("getDepartmentsByIds of DepartmentServiceImpl class is not implemented");
+        return departmentRepository.findAllById(ids)
+                .stream()
+                .map(department -> modelMapper.map(department, DepartmentResponseDto.class))
+                .toList();
     }
 }

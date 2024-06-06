@@ -1,9 +1,17 @@
 package cee.dev.employeeservice.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,13 +37,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final ModelMapper modelMapper;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, WebClient webClient, RestClient restClient, ModelMapper modelMapper) {
+    private Map<Integer, DepartmentResponseDto> collect;
+
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, WebClient webClient, RestClient restClient,
+            ModelMapper modelMapper) {
         this.employeeRepository = employeeRepository;
         this.webClient = webClient;
         this.restClient = restClient;
         this.modelMapper = modelMapper;
     }
-
 
     @Override
     public EmployeeResponseDto createEmployee(EmployeeCreateRequestDto employeeCreateRequestDto) {
@@ -69,29 +79,52 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeWithDepartment> getEmployeesWithDepartment() {
 
-
         List<EmployeeWithDepartment> employeesList = employeeRepository.findAll()
                 .stream()
                 .map(e -> modelMapper.map(e, EmployeeWithDepartment.class))
                 .toList();
 
-//        log.info("Solution 1");
-//        setDepartmentInformationByIndividualCalls(employeesList);
+        // ?solution 1
+        // log.info("Solution 1");
+        // setDepartmentInformationByIndividualCalls(employeesList);
 
+        // ?solution 2
         log.info("Solution 2");
         List<Integer> departmentIds = employeesList.stream().map(emp -> emp.getDepartmentId()).toList();
-       // List<Integer> departmentIds = employeesList.stream().map(EmployeeWithDepartment::getDepartmentId).toList();
+        // List<Integer> departmentIds =
+        // employeesList.stream().map(EmployeeWithDepartment::getDepartmentId).toList();
 
-        //http://localhost:8081/api/departments/batch
-        //[ids]
+        // http://localhost:8081/api/departments/batch
+        // [ids]
 
+        return getEmployeesBySendingBatchIdRequest(employeesList, departmentIds);
+    }
 
-        return employeesList;
+    private List<EmployeeWithDepartment> getEmployeesBySendingBatchIdRequest(List<EmployeeWithDepartment> employeesList,
+            List<Integer> departmentIds) {
+        List<DepartmentResponseDto> departments = restClient.post()
+                .uri("http://localhost:8081/api/departments/batch")
+                .body(departmentIds)
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<DepartmentResponseDto>>() {
+                });
+
+        if (departments == null) {
+            departments = new ArrayList<>();
+        }
+
+        Map<Integer, DepartmentResponseDto> departmentMap = departments.stream()
+                .collect(Collectors.toMap(DepartmentResponseDto::getDepartmentNumber, Function.identity()));
+        return employeesList.stream().map(emp -> {
+            emp.setDepartmentResponseDto(departmentMap.get(emp.getDepartmentId()));
+            return emp;
+        })
+                .toList();
     }
 
     private void setDepartmentInformationByIndividualCalls(List<EmployeeWithDepartment> employeesList) {
         employeesList.stream().forEach(emp -> {
-            //DepartmentResponseDto dpt = getDepartmentUsingWebClient(emp);
+            // DepartmentResponseDto dpt = getDepartmentUsingWebClient(emp);
             DepartmentResponseDto dpt = getDepartmentUsingRestClient(emp);
             emp.setDepartmentResponseDto(dpt);
         });

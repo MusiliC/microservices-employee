@@ -1,11 +1,11 @@
-@host=http://localhost:8080
+@host=http://localhost:8081
 
 ### Create Employee
 POST {{host}}/api/departments
 Content-Type: application/json
 
 {
-  "departmentName": "Information Technology"
+  "departmentName": "Engineering"
 }
 
 ### Get departments
@@ -24,3 +24,12 @@ Content-Type: application/json
 
 ### Delete departments
 DELETE {{host}}/api/departments/300
+
+
+### Get departments by ids
+POST {{host}}/api/departments/batch
+Content-Type: application/json
+
+[
+   1,2,3,4,5
+]
