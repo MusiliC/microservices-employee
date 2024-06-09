@@ -1,16 +1,17 @@
 package cee.dev.employeeservice.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collector;
+
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -23,11 +24,16 @@ import cee.dev.employeeservice.model.EmployeeResponseDto;
 import cee.dev.employeeservice.model.EmployeeWithDepartment;
 import cee.dev.employeeservice.repository.EmployeeRepository;
 import cee.dev.employeeservice.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
 
     private static final Logger log = LoggerFactory.getLogger(EmployeeServiceImpl.class);
+
+@Value("${department-service-host-ur}")
+private String departmentServiceHostUrl;
 
     private final EmployeeRepository employeeRepository;
 
@@ -103,7 +109,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private List<EmployeeWithDepartment> getEmployeesBySendingBatchIdRequest(List<EmployeeWithDepartment> employeesList,
             List<Integer> departmentIds) {
         List<DepartmentResponseDto> departments = restClient.post()
-                .uri("http://localhost:8081/api/departments/batch")
+                .uri(departmentServiceHostUrl + "/api/departments/batch")
                 .body(departmentIds)
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<DepartmentResponseDto>>() {
@@ -134,7 +140,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.info("Making call using web client");
         return webClient
                 .get()
-                .uri("http://localhost:8081/api/departments/" + emp.getDepartmentId())
+                .uri(departmentServiceHostUrl + "/api/departments/" + emp.getDepartmentId())
                 .retrieve()
                 .bodyToMono(DepartmentResponseDto.class)
                 .block();
@@ -144,7 +150,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         log.info("Making call using rest client");
         return restClient
                 .get()
-                .uri("http://localhost:8081/api/departments/" + emp.getDepartmentId())
+                .uri(departmentServiceHostUrl + "/api/departments/" + emp.getDepartmentId())
                 .retrieve()
                 .body(DepartmentResponseDto.class);
     }

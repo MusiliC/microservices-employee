@@ -16,5 +16,7 @@ management:
       exposure:
         include: "*"
 
+department-service-host-url: ${DEPARTMENT_SERVICE_HOST_URL:http://localhost:8081}
+
 
 

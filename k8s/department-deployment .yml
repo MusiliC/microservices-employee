@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  employee
+  name:  department
   namespace: default
   labels:
-    app:  employee
+    app:  department
 spec:
   selector:
     matchLabels:
-      app: employee
+      app: department
   replicas: 1
   strategy:
     rollingUpdate:
@@ -18,15 +18,15 @@ spec:
   template:
     metadata:
       labels:
-        app:  employee
+        app:  department
     spec:
       # initContainers:
         # Init containers are exactly like regular containers, except:
           # - Init containers always run to completion.
           # - Each init container must complete successfully before the next one starts.
       containers:
-      - name:  employee
-        image:  musilic/employee-service:1.0.0
+      - name:  department
+        image:  musilic/department-service:1.0.0
         resources:
           requests:
             cpu: 100m
@@ -37,7 +37,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /actuator/health
-            port: 8080
+            port: 8081
           initialDelaySeconds: 20
           timeoutSeconds: 20
           successThreshold: 1
@@ -46,7 +46,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /actuator/health
-            port: 8080
+            port: 8081
           initialDelaySeconds: 20
           timeoutSeconds: 20 
           successThreshold: 1
@@ -55,21 +55,16 @@ spec:
         env:
         - name: MYSQL_HOST
           value: mysql-0.mysql
-        - name: EMPLOYEE_DB_NAME
+        - name: department_DB_NAME
           valueFrom: 
             configMapKeyRef: 
               name: cluster-config-map
-              key: employee-database-name   
+              key: department-database-name   
         - name: MYSQL_PORT
           valueFrom: 
             configMapKeyRef: 
               name: cluster-config-map
-              key:  mysql-database-port    
-        - name: DEPARTMENT_SERVICE_HOST_URL
-          valueFrom: 
-            configMapKeyRef: 
-              name: cluster-config-map
-              key:  department-service-host                 
+              key:  mysql-database-port      
         - name: MYSQL_DB_USERNAME
           valueFrom: 
             secretKeyRef: 
@@ -81,8 +76,8 @@ spec:
               name: cluster-secret
               key: mysql-root-password           
         ports:
-        - containerPort:  8080
-          name:  employee
+        - containerPort:  8081
+          name:  department
       restartPolicy: Always
 
 ---
@@ -90,19 +85,41 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: employee-lb
+  name: department-svc
   namespace: default
 spec:
   selector:
-    app: employee
+    app: department-svc
+  type: ClusterIP
+  sessionAffinity: None
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  ports:
+  - name: department-svc
+    protocol: TCP
+    port: 80
+    targetPort: 8081
+   
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: department-lb
+  namespace: default
+spec:
+  selector:
+    app: department
   type: LoadBalancer
   sessionAffinity: None
   sessionAffinityConfig:
     clientIP:
       timeoutSeconds: 10800
   ports:
-  - name: employee
+  - name: department
     protocol: TCP
     port: 80
-    targetPort: 8080
-  
+    targetPort: 8081
+

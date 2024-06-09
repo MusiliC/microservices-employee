@@ -5,5 +5,7 @@ metadata:
   namespace: default
 data:
   employee-database-name: employee
+  department-database-name: department
   mysql-database-host: mysql-0.mysql
   mysql-database-port: "3306"
+  department-service-host: http://department-svc
