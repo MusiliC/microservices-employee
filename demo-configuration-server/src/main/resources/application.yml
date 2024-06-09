@@ -1,0 +1,11 @@
+spring:
+        application:
+            name: demo-configuration-server
+        cloud: 
+            config: 
+                server:
+                    git:
+                        uri: file:/home/master/Documents/microservices/mhusika/demo-config-repo 
+                       # uri: You can add github url from remote 
+server:
+    port: 8888
