@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: demo-api-gateway
+
+  config:
+      import: optional:configserver:${EUREKA_SERVER_ADDRESS:http://localhost:8888}
