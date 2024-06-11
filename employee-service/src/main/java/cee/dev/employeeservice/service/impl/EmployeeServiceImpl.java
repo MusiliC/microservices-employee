@@ -32,7 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private static final Logger log = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
-@Value("${department-service-host-ur}")
+@Value("${department-service-host-url}")
 private String departmentServiceHostUrl;
 
     private final EmployeeRepository employeeRepository;
