@@ -1,4 +1,4 @@
-@host=http://localhost:8080
+@host=http://localhost:7000
 
 ### Create Employee
 POST {{host}}/api/employees

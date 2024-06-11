@@ -32,24 +32,25 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private static final Logger log = LoggerFactory.getLogger(EmployeeServiceImpl.class);
 
-@Value("${department-service-host-url}")
-private String departmentServiceHostUrl;
+    @Value("${department-service-host-url}")
+    private String departmentServiceHostUrl;
 
     private final EmployeeRepository employeeRepository;
 
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
 
-    private final RestClient restClient;
+    private final RestClient.Builder restClientBuilder;
 
     private final ModelMapper modelMapper;
 
     private Map<Integer, DepartmentResponseDto> collect;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, WebClient webClient, RestClient restClient,
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, WebClient.Builder webClientBuilder,
+            RestClient.Builder restClientBuilder,
             ModelMapper modelMapper) {
         this.employeeRepository = employeeRepository;
-        this.webClient = webClient;
-        this.restClient = restClient;
+        this.webClientBuilder = webClientBuilder;
+        this.restClientBuilder = restClientBuilder;
         this.modelMapper = modelMapper;
     }
 
@@ -108,7 +109,7 @@ private String departmentServiceHostUrl;
 
     private List<EmployeeWithDepartment> getEmployeesBySendingBatchIdRequest(List<EmployeeWithDepartment> employeesList,
             List<Integer> departmentIds) {
-        List<DepartmentResponseDto> departments = restClient.post()
+        List<DepartmentResponseDto> departments = restClientBuilder.build().post()
                 .uri(departmentServiceHostUrl + "/api/departments/batch")
                 .body(departmentIds)
                 .retrieve()
@@ -138,7 +139,8 @@ private String departmentServiceHostUrl;
 
     private DepartmentResponseDto getDepartmentUsingWebClient(EmployeeWithDepartment emp) {
         log.info("Making call using web client");
-        return webClient
+        return webClientBuilder
+        .build()
                 .get()
                 .uri(departmentServiceHostUrl + "/api/departments/" + emp.getDepartmentId())
                 .retrieve()
@@ -148,7 +150,8 @@ private String departmentServiceHostUrl;
 
     private DepartmentResponseDto getDepartmentUsingRestClient(EmployeeWithDepartment emp) {
         log.info("Making call using rest client");
-        return restClient
+        return restClientBuilder
+                .build()
                 .get()
                 .uri(departmentServiceHostUrl + "/api/departments/" + emp.getDepartmentId())
                 .retrieve()
