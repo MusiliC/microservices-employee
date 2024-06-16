@@ -27,7 +27,6 @@ import cee.dev.employeeservice.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
 
     private static final Logger log = LoggerFactory.getLogger(EmployeeServiceImpl.class);
